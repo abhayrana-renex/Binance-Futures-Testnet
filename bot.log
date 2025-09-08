@@ -1,0 +1,69 @@
+2025-09-08 17:39:11 | INFO | BasicBot | REQUEST | futures_create_order_stop_limit | {"symbol": "BTCUSDT", "side": "BUY", "type": "STOP", "timeInForce": "GTC", "quantity": "3", "price": "342", "stopPrice": "235"}
+2025-09-08 17:39:11 | ERROR | BasicBot | ERROR | futures_create_order_stop_limit | BinanceAPIException: APIError(code=-2014): API-key format invalid.
+2025-09-08 17:39:11 | ERROR | BasicBot | Binance error: APIError(code=-2014): API-key format invalid.
+2025-09-08 21:24:10 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "10"}
+2025-09-08 21:24:11 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:24:11 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:27:37 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "2"}
+2025-09-08 21:27:37 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:27:37 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:36:04 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "3"}
+2025-09-08 21:36:04 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:36:04 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:37:30 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "SELL", "type": "MARKET", "quantity": "0.01"}
+2025-09-08 21:37:31 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:37:31 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:37:54 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "0.01"}
+2025-09-08 21:37:55 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:37:55 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:45:21 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "0.01"}
+2025-09-08 21:45:22 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 21:45:22 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:32:58 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "0.01"}
+2025-09-08 22:32:59 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:32:59 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:40:27 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "21"}
+2025-09-08 22:40:27 | ERROR | BasicBot | ERROR | futures_create_order_market | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:40:27 | ERROR | BasicBot | Binance error: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:45:13 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-08 22:45:14 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-08 22:45:14 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-08 22:45:14 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757351714632}
+2025-09-08 22:45:14 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-08 22:45:15 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:54:03 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-08 22:54:06 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-08 22:54:06 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-08 22:54:06 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757352246677}
+2025-09-08 22:54:06 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-08 22:54:07 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:54:35 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-08 22:54:35 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-08 22:54:35 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-08 22:54:36 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757352276298}
+2025-09-08 22:54:36 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-08 22:54:36 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:55:27 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-08 22:55:28 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-08 22:55:28 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-08 22:55:29 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757352329040}
+2025-09-08 22:55:29 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-08 22:55:29 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-08 22:57:47 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-08 22:57:49 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-08 22:57:49 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-08 22:57:49 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757352469532}
+2025-09-08 22:57:49 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-08 22:57:49 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-09 00:38:35 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-09 00:38:36 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-09 00:38:36 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-09 00:38:37 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757358517128}
+2025-09-09 00:38:37 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-09 00:38:37 | INFO | BasicBot | RESPONSE | health_check | {"canTrade": true}
+2025-09-09 00:39:04 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "0.01"}
+2025-09-09 00:39:04 | INFO | BasicBot | RESPONSE | futures_create_order_market | {"orderId": 5642879232, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJ77abd561ee40fc537296d6", "price": "0.00", "avgPrice": "0.00", "origQty": "0.010", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "MARKET", "reduceOnly": false, "closePosition": false, "side": "BUY", "positionSide": "BOTH", "stopPrice": "0.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "MARKET", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757358544584}
+2025-09-09 00:43:21 | INFO | BasicBot | REQUEST | futures_create_order_limit | {"symbol": "BTCUSDT", "side": "BUY", "type": "LIMIT", "timeInForce": "GTC", "quantity": "0.01", "price": "110000"}
+2025-09-09 00:43:22 | INFO | BasicBot | RESPONSE | futures_create_order_limit | {"orderId": 5642884358, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJ9228ad4225e547da83a22b", "price": "110000.00", "avgPrice": "0.00", "origQty": "0.010", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "LIMIT", "reduceOnly": false, "closePosition": false, "side": "BUY", "positionSide": "BOTH", "stopPrice": "0.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "LIMIT", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757358802340}
+2025-09-09 00:44:20 | INFO | BasicBot | REQUEST | futures_create_order_stop_limit | {"symbol": "BTCUSDT", "side": "SELL", "type": "STOP", "timeInForce": "GTC", "quantity": "0.01", "price": "90000", "stopPrice": "95000"}
+2025-09-09 00:44:21 | INFO | BasicBot | RESPONSE | futures_create_order_stop_limit | {"orderId": 5642885482, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJb84ae1268bf555972d2e27", "price": "90000.00", "avgPrice": "0.00", "origQty": "0.010", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "STOP", "reduceOnly": false, "closePosition": false, "side": "SELL", "positionSide": "BOTH", "stopPrice": "95000.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "STOP", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757358861063}
