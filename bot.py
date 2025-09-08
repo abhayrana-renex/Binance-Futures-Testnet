@@ -19,6 +19,18 @@ from binance.enums import (
 
 LOG_FILE = "bot.log"
 
+# Optional Rich TUI
+try:
+    from rich.console import Console
+    from rich.table import Table
+    from rich.panel import Panel
+    from rich import box
+    RICH_AVAILABLE = True
+    _RICH_CONSOLE: Optional[Console] = Console()
+except Exception:
+    RICH_AVAILABLE = False
+    _RICH_CONSOLE = None
+
 
 def setup_logger(level: int = logging.INFO) -> logging.Logger:
     """Configure module-level logger writing to bot.log and stdout."""
@@ -331,6 +343,86 @@ class BasicBot:
             self._log_error(operation, exc)
             raise
 
+    def place_take_profit_limit_order(
+        self,
+        symbol: str,
+        side: str,
+        quantity: Any,
+        stop_price: Any,
+        limit_price: Any,
+        time_in_force: str = TIME_IN_FORCE_GTC,
+    ) -> Dict[str, Any]:
+        """
+        Place a USDT-M Futures take-profit limit order.
+        Futures API uses type "TAKE_PROFIT" with stopPrice and price.
+        """
+        operation = "futures_create_order_tp_limit"
+        symbol = symbol.upper()
+        side = side.upper()
+        raw_qty = self._to_decimal(quantity)
+        raw_stop = self._to_decimal(stop_price)
+        raw_limit = self._to_decimal(limit_price)
+
+        qty_str, limit_str = self._apply_filters(symbol, quantity=raw_qty, price=raw_limit)
+        _, stop_str = self._apply_filters(symbol, quantity=None, price=raw_stop)
+
+        params = {
+            "symbol": symbol,
+            "side": side,
+            "type": "TAKE_PROFIT",
+            "timeInForce": time_in_force,
+            "quantity": qty_str,
+            "price": limit_str,
+            "stopPrice": stop_str,
+        }
+        self._log_request(operation, params)
+        try:
+            resp = self.client.futures_create_order(**params)
+            self._log_response(operation, resp)
+            return resp
+        except (BinanceAPIException, BinanceOrderException, Exception) as exc:
+            self._log_error(operation, exc)
+            raise
+
+    def get_account_summary(self) -> Dict[str, Any]:
+        """Return a concise futures account summary: balances and open positions."""
+        operation = "account_summary"
+        summary: Dict[str, Any] = {"balances": [], "positions": []}
+        try:
+            self._log_request(operation, {"action": "balances"})
+            balances = self.client.futures_account_balance()
+            self._log_response(operation, {"balances_count": len(balances)})
+            for b in balances:
+                if b.get("asset") == "USDT":
+                    summary["balances"].append(
+                        {
+                            "asset": b.get("asset"),
+                            "balance": b.get("balance"),
+                            "availableBalance": b.get("availableBalance"),
+                        }
+                    )
+
+            self._log_request(operation, {"action": "positions"})
+            positions = self.client.futures_position_information()
+            self._log_response(operation, {"positions_count": len(positions)})
+            for p in positions:
+                pos_amt = Decimal(p.get("positionAmt", "0"))
+                if pos_amt != 0:
+                    summary["positions"].append(
+                        {
+                            "symbol": p.get("symbol"),
+                            "positionAmt": p.get("positionAmt"),
+                            "entryPrice": p.get("entryPrice"),
+                            "unRealizedProfit": p.get("unRealizedProfit"),
+                            "leverage": p.get("leverage"),
+                            "marginType": p.get("marginType"),
+                        }
+                    )
+        except (BinanceAPIException, BinanceOrderException, Exception) as exc:
+            self._log_error(operation, exc)
+            raise
+        return summary
+
 
 def _prompt_non_empty(prompt: str) -> str:
     while True:
@@ -363,8 +455,6 @@ def _prompt_decimal(prompt: str) -> Decimal:
 
 def print_order_result(title: str, data: Dict[str, Any]) -> None:
     """Render a concise order result to the CLI."""
-    print("\n" + title)
-    print("-" * len(title))
     fields = [
         ("symbol", data.get("symbol")),
         ("side", data.get("side")),
@@ -379,11 +469,82 @@ def print_order_result(title: str, data: Dict[str, Any]) -> None:
         ("stopPrice", data.get("stopPrice")),
         ("updateTime", data.get("updateTime")),
     ]
-    for key, value in fields:
-        if value is not None:
-            print(f"{key}: {value}")
-    print()
+    if RICH_AVAILABLE and _RICH_CONSOLE:
+        table = Table(title=title, box=box.SIMPLE_HEAVY)
+        table.add_column("Field", style="cyan", no_wrap=True)
+        table.add_column("Value", style="white")
+        for key, value in fields:
+            if value is not None:
+                table.add_row(str(key), str(value))
+        _RICH_CONSOLE.print(table)
+    else:
+        print("\n" + title)
+        print("-" * len(title))
+        for key, value in fields:
+            if value is not None:
+                print(f"{key}: {value}")
+        print()
 
+
+def print_account_summary(summary: Dict[str, Any]) -> None:
+    if RICH_AVAILABLE and _RICH_CONSOLE:
+        header = Panel.fit("[bold green]Account Summary[/bold green]", border_style="green")
+        _RICH_CONSOLE.print(header)
+
+        bal_table = Table(title="Balances", box=box.SIMPLE_HEAVY)
+        bal_table.add_column("Asset", style="cyan")
+        bal_table.add_column("Total", style="white")
+        bal_table.add_column("Available", style="white")
+        if summary.get("balances"):
+            for b in summary["balances"]:
+                bal_table.add_row(
+                    str(b.get("asset")), str(b.get("balance")), str(b.get("availableBalance"))
+                )
+        else:
+            bal_table.add_row("-", "-", "-")
+        _RICH_CONSOLE.print(bal_table)
+
+        pos_table = Table(title="Open Positions", box=box.SIMPLE_HEAVY)
+        pos_table.add_column("Symbol", style="cyan")
+        pos_table.add_column("Amt", style="white")
+        pos_table.add_column("Entry", style="white")
+        pos_table.add_column("uPnL", style="white")
+        pos_table.add_column("Lev", style="white")
+        pos_table.add_column("Margin", style="white")
+        if summary.get("positions"):
+            for p in summary["positions"]:
+                pos_table.add_row(
+                    str(p.get("symbol")),
+                    str(p.get("positionAmt")),
+                    str(p.get("entryPrice")),
+                    str(p.get("unRealizedProfit")),
+                    str(p.get("leverage")),
+                    str(p.get("marginType")),
+                )
+        else:
+            pos_table.add_row("-", "-", "-", "-", "-", "-")
+        _RICH_CONSOLE.print(pos_table)
+    else:
+        print("\nAccount Summary")
+        print("---------------")
+        if summary.get("balances"):
+            for b in summary["balances"]:
+                print(
+                    f"Balance {b.get('asset')}: total={b.get('balance')} available={b.get('availableBalance')}"
+                )
+        else:
+            print("No balances returned.")
+
+        if summary.get("positions"):
+            print("\nOpen Positions:")
+            for p in summary["positions"]:
+                print(
+                    f"{p.get('symbol')} amt={p.get('positionAmt')} entry={p.get('entryPrice')} "
+                    f"uPnL={p.get('unRealizedProfit')} lev={p.get('leverage')} margin={p.get('marginType')}"
+                )
+        else:
+            print("\nNo open positions.")
+        print()
 
 def main() -> None:
     logger = setup_logger()
@@ -395,9 +556,12 @@ def main() -> None:
     # Initialize bot (defaults to testnet)
     bot = BasicBot(api_key=api_key, api_secret=api_secret, testnet=True, log_level=logging.INFO)
 
-    print("\nBinance Futures Testnet Trading Bot")
-    print("===================================")
-    print("Connected to: https://testnet.binancefuture.com")
+    if RICH_AVAILABLE and _RICH_CONSOLE:
+        _RICH_CONSOLE.print(Panel.fit("[bold]Binance Futures Testnet Trading Bot[/bold]\nhttps://testnet.binancefuture.com", border_style="blue"))
+    else:
+        print("\nBinance Futures Testnet Trading Bot")
+        print("===================================")
+        print("Connected to: https://testnet.binancefuture.com")
 
     # Startup health check: connectivity, time sync, and credentials
     try:
@@ -418,14 +582,28 @@ def main() -> None:
 
     # Simple interactive menu
     while True:
-        print("\nSelect an action:")
-        print("  1) Place MARKET Order")
-        print("  2) Place LIMIT Order")
-        print("  3) Place STOP-LIMIT Order")
-        print("  4) Exit")
+        if RICH_AVAILABLE and _RICH_CONSOLE:
+            menu = (
+                "[bold]Select an action:[/bold]\n"
+                "  [cyan]1[/cyan]) Place MARKET Order\n"
+                "  [cyan]2[/cyan]) Place LIMIT Order\n"
+                "  [cyan]3[/cyan]) Place STOP-LIMIT Order\n"
+                "  [cyan]4[/cyan]) Place TAKE-PROFIT LIMIT Order\n"
+                "  [cyan]5[/cyan]) View Account Summary\n"
+                "  [cyan]6[/cyan]) Exit"
+            )
+            _RICH_CONSOLE.print(Panel(menu, border_style="magenta"))
+        else:
+            print("\nSelect an action:")
+            print("  1) Place MARKET Order")
+            print("  2) Place LIMIT Order")
+            print("  3) Place STOP-LIMIT Order")
+            print("  4) Place TAKE-PROFIT LIMIT Order")
+            print("  5) View Account Summary")
+            print("  6) Exit")
 
-        choice = _prompt_choice("Choice (1-4): ", ("1", "2", "3", "4"))
-        if choice == "4":
+        choice = _prompt_choice("Choice (1-6): ", ("1", "2", "3", "4", "5", "6"))
+        if choice == "6":
             print("Goodbye!")
             break
 
@@ -460,6 +638,23 @@ def main() -> None:
                     limit_price=limit_price,
                 )
                 print_order_result("Stop-Limit Order Result", result)
+
+            elif choice == "4":
+                qty = _prompt_decimal("Quantity: ")
+                stop_price = _prompt_decimal("Stop Price (trigger): ")
+                limit_price = _prompt_decimal("Limit Price (after trigger): ")
+                result = bot.place_take_profit_limit_order(
+                    symbol=symbol,
+                    side=side,
+                    quantity=qty,
+                    stop_price=stop_price,
+                    limit_price=limit_price,
+                )
+                print_order_result("Take-Profit Limit Order Result", result)
+
+            elif choice == "5":
+                summary = bot.get_account_summary()
+                print_account_summary(summary)
 
         except ValueError as ve:
             logger.error("Validation error: %s", str(ve))
