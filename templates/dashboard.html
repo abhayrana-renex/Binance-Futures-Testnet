@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Binance Trading Bot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-tachometer-alt"></i> Trading Dashboard
+        </h1>
+    </div>
+</div>
+
+<!-- Health Status -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-heartbeat"></i> System Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">Connection:</span>
+                            <span id="connection-status" class="badge bg-secondary">Checking...</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">Last Update:</span>
+                            <span id="last-update">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Account Summary -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-wallet"></i> Account Balance
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="balance-info">
+                    {% if account.balances %}
+                        {% for balance in account.balances %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">{{ balance.asset }}</span>
+                            <div class="text-end">
+                                <div class="balance-positive">{{ balance.balance }}</div>
+                                <small class="text-muted">Available: {{ balance.availableBalance }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No balance information available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line"></i> Open Positions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="positions-info">
+                    {% if account.positions %}
+                        {% for position in account.positions %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="fw-bold">{{ position.symbol }}</span>
+                                <br>
+                                <small class="text-muted">{{ position.positionAmt }} @ {{ position.entryPrice }}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="{% if position.unRealizedProfit|float >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
+                                    {{ position.unRealizedProfit }}
+                                </div>
+                                <small class="text-muted">{{ position.leverage }}x {{ position.marginType }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No open positions</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('orders') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-plus"></i> Place Order
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-info w-100" onclick="refreshAccount()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('config') }}" class="btn btn-secondary w-100">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-warning w-100" onclick="healthCheck()">
+                            <i class="fas fa-stethoscope"></i> Health Check
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-history"></i> Recent Orders
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Symbol</th>
+                                <th>Side</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-orders">
+                            {% if recent_orders %}
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.timestamp[:19] if order.timestamp else '-' }}</td>
+                                    <td>{{ order.symbol }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if order.side == 'BUY' else 'danger' }}">
+                                            {{ order.side }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.type }}</td>
+                                    <td>{{ order.origQty }}</td>
+                                    <td>{{ order.price or order.avgPrice or '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if order.status == 'FILLED' else 'warning' }}">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No recent orders</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Update account summary data
+    function updateAccountSummary(data) {
+        // Update balance info
+        const balanceInfo = document.getElementById('balance-info');
+        if (data.balances && data.balances.length > 0) {
+            let balanceHtml = '';
+            data.balances.forEach(balance => {
+                balanceHtml += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">${balance.asset}</span>
+                        <div class="text-end">
+                            <div class="balance-positive">${balance.balance}</div>
+                            <small class="text-muted">Available: ${balance.availableBalance}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            balanceInfo.innerHTML = balanceHtml;
+        }
+
+        // Update positions info
+        const positionsInfo = document.getElementById('positions-info');
+        if (data.positions && data.positions.length > 0) {
+            let positionsHtml = '';
+            data.positions.forEach(position => {
+                const pnlClass = parseFloat(position.unRealizedProfit) >= 0 ? 'balance-positive' : 'balance-negative';
+                positionsHtml += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="fw-bold">${position.symbol}</span>
+                            <br>
+                            <small class="text-muted">${position.positionAmt} @ ${position.entryPrice}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="${pnlClass}">${position.unRealizedProfit}</div>
+                            <small class="text-muted">${position.leverage}x ${position.marginType}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            positionsInfo.innerHTML = positionsHtml;
+        } else {
+            positionsInfo.innerHTML = '<p class="text-muted">No open positions</p>';
+        }
+    }
+
+    // Refresh account data
+    function refreshAccount() {
+        const refreshBtn = event.target;
+        showLoading(refreshBtn);
+        
+        fetch('/api/account')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert('Error refreshing account: ' + data.error, 'danger');
+                } else {
+                    updateAccountSummary(data);
+                    document.getElementById('last-update').textContent = new Date().toLocaleString();
+                    showAlert('Account data refreshed successfully', 'success');
+                }
+            })
+            .catch(error => {
+                console.error('Refresh error:', error);
+                showAlert('Error refreshing account data', 'danger');
+            })
+            .finally(() => {
+                hideLoading(refreshBtn);
+            });
+    }
+
+    // Health check
+    function healthCheck() {
+        const healthBtn = event.target;
+        showLoading(healthBtn);
+        
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('connection-status');
+                if (data.status === 'healthy') {
+                    statusElement.className = 'badge bg-success';
+                    statusElement.textContent = 'Healthy';
+                    showAlert('Health check passed', 'success');
+                } else {
+                    statusElement.className = 'badge bg-danger';
+                    statusElement.textContent = 'Unhealthy';
+                    showAlert('Health check failed: ' + (data.error || 'Unknown error'), 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Health check error:', error);
+                const statusElement = document.getElementById('connection-status');
+                statusElement.className = 'badge bg-danger';
+                statusElement.textContent = 'Error';
+                showAlert('Health check failed', 'danger');
+            })
+            .finally(() => {
+                hideLoading(healthBtn);
+            });
+    }
+
+    // Initial health check
+    document.addEventListener('DOMContentLoaded', function() {
+        healthCheck();
+    });
+</script>
+{% endblock %}
+

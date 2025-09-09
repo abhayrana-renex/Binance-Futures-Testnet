@@ -1,101 +1,126 @@
 # Binance USDT-M Futures Testnet Trading Bot
 
-<<<<<<< HEAD
-A simple, production-ready Python CLI bot for Binance USDT-M Futures Testnet. Supports Market, Limit, Stop-Limit, and Take-Profit Limit orders with robust input validation, logging, startup health checks, and a basic account summary UI.
+A comprehensive trading bot for Binance USDT-M Futures Testnet with multiple UI interfaces. Supports Market, Limit, Stop-Limit, and Take-Profit Limit orders with robust input validation, logging, startup health checks, and real-time monitoring.
 
 ## Features
-- Market, Limit, Stop-Limit, and Take-Profit Limit orders (USDT-M Futures)
-- Validates symbol filters (step size, tick size, min qty)
-- Logs requests, responses, and errors to `bot.log`
-- Startup health check: connectivity, server time drift, and credential permissions
-- Menu-driven CLI with clear status output and Account Summary
-- Optional colorful TUI powered by `rich` (falls back to plain CLI)
-=======
-A simple, production-ready Python CLI bot for Binance USDT-M Futures Testnet. Supports Market, Limit, and Stop-Limit orders with robust input validation, logging, and startup health checks.
-
-## Features
-- Market, Limit, and Stop-Limit orders (USDT-M Futures)
-- Validates symbol filters (step size, tick size, min qty)
-- Logs requests, responses, and errors to `bot.log`
-- Startup health check: connectivity, server time drift, and credential permissions
-- Menu-driven CLI with clear status output
->>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
+- **Multiple UI Options**: Web interface, Enhanced CLI, and Original CLI
+- **Order Types**: Market, Limit, Stop-Limit, and Take-Profit Limit orders (USDT-M Futures)
+- **Real-time Monitoring**: Live account dashboard, price updates, and order tracking
+- **Input Validation**: Validates symbol filters (step size, tick size, min qty)
+- **Comprehensive Logging**: Logs requests, responses, and errors to `bot.log`
+- **Health Checks**: Connectivity, server time drift, and credential permissions
+- **Configuration Management**: Easy API key setup and management
+- **Responsive Design**: Modern web interface with mobile support
 
 ## Requirements
 - Python 3.9+
 - Binance Futures Testnet API Key/Secret
-- Package: `python-binance`
-<<<<<<< HEAD
-- Optional UI: `rich`
+- Core package: `python-binance`
+- Web UI: `Flask`, `Werkzeug`
+- Enhanced CLI: `rich`
 
 ## Quick Start
-1) Install dependencies (plus optional UI):
+
+### Option 1: Use the Launcher (Recommended)
 ```bash
-pip install python-binance rich
-=======
+python launcher.py
+```
+The launcher will guide you through choosing your preferred interface and installing any missing dependencies.
 
-## Quick Start
+### Option 2: Manual Setup
 1) Install dependencies:
 ```bash
-pip install python-binance
->>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
+pip install -r requirements.txt
 ```
 
-2) Export your Testnet credentials (recommended):
+2) Set your Testnet credentials:
 ```bash
 export BINANCE_API_KEY=your_testnet_key
 export BINANCE_API_SECRET=your_testnet_secret
 ```
 
-3) Run the bot:
+3) Choose your interface:
+
+**Web UI (Modern Browser Interface):**
 ```bash
-python /Users/abhayrana/prime/bot.py
+python web_ui.py
+```
+Then open http://localhost:5000 in your browser.
+
+**Enhanced CLI (Rich Terminal Interface):**
+```bash
+python enhanced_cli.py
 ```
 
-- The bot points to `https://testnet.binancefuture.com` automatically.
-- At startup, a health check runs. If something’s wrong, the bot prints a clear diagnostic and exits.
+**Original CLI (Simple Text Interface):**
+```bash
+python bot.py
+```
+
+## UI Options
+
+### 🌐 Web UI
+- **Modern browser-based interface**
+- Real-time dashboard with live updates
+- Interactive order placement forms
+- Account balance and position monitoring
+- Configuration management
+- Responsive design for mobile/desktop
+- Order history tracking
+
+### 💻 Enhanced CLI
+- **Rich terminal interface with colors and formatting**
+- Live dashboard with real-time account updates
+- Interactive order placement
+- Live price monitoring
+- Detailed account information
+- Progress bars and status indicators
+
+### 🔧 Original CLI
+- **Simple text-based interface**
+- Basic menu-driven navigation
+- Order placement functionality
+- Account summary display
+- Works without additional dependencies
 
 ## Usage
-<<<<<<< HEAD
-- Choose an action from the menu:
-  - 1 Market Order
-  - 2 Limit Order
-  - 3 Stop-Limit Order
-  - 4 Take-Profit Limit Order
-  - 5 Account Summary
-  - 6 Exit
-- Provide a valid USDT-M symbol (e.g., `BTCUSDT`).
-- Enter quantity and (if applicable) price values. The bot auto-adjusts to step/tick sizes but will reject values below `minQty`.
 
-If `rich` is installed, you’ll see colored panels and tables for menus, orders, and account summaries. Without `rich`, it falls back to a plain text interface.
+### Web UI Usage
+1. Start the web server: `python web_ui.py`
+2. Open your browser to `http://localhost:5000`
+3. Configure your API keys in the Config section
+4. Use the Dashboard to monitor your account
+5. Place orders using the Orders page
+6. View real-time updates and order history
 
-=======
-- Choose an order type from the menu.
-- Provide a valid USDT-M symbol (e.g., `BTCUSDT`).
-- Enter quantity and (if applicable) price values. The bot auto-adjusts to step/tick sizes but will reject values below `minQty`.
+### Enhanced CLI Usage
+1. Start the enhanced CLI: `python enhanced_cli.py`
+2. Choose from the interactive menu:
+   - Live Dashboard: Real-time account monitoring
+   - Place Order: Interactive order placement
+   - Price Monitor: Live price tracking
+   - Account Details: Detailed account information
+   - Health Check: System connectivity test
 
->>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
-Example flow:
-```
-Select an action:
-  1) Place MARKET Order
-  2) Place LIMIT Order
-  3) Place STOP-LIMIT Order
-<<<<<<< HEAD
-  4) Place TAKE-PROFIT LIMIT Order
-  5) View Account Summary
-  6) Exit
-Choice (1-6): 5
-=======
-  4) Exit
-Choice (1-4): 1
-Symbol (e.g., BTCUSDT): BTCUSDT
-Side (BUY/SELL): BUY
-Quantity: 0.001
->>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
-```
+### Original CLI Usage
+1. Start the original CLI: `python bot.py`
+2. Choose an action from the menu:
+   - 1 Market Order
+   - 2 Limit Order
+   - 3 Stop-Limit Order
+   - 4 Take-Profit Limit Order
+   - 5 Account Summary
+   - 6 Exit
+3. Provide a valid USDT-M symbol (e.g., `BTCUSDT`)
+4. Enter quantity and (if applicable) price values
 
-The result shows order details (status, orderId, executedQty, etc.). All request/response payloads are saved in `bot.log`.
+### Order Types
+- **Market Orders**: Execute immediately at current market price
+- **Limit Orders**: Execute only at specified price or better
+- **Stop-Limit Orders**: Trigger when stop price is reached, then place limit order
+- **Take-Profit Limit Orders**: Close position at profit target
+
+All orders are validated against exchange filters (step size, tick size, min quantity). Request/response payloads are logged to `bot.log`.
 
 ## Configuration
 - API keys: read from `BINANCE_API_KEY` and `BINANCE_API_SECRET` env vars, or you will be prompted.
@@ -124,19 +149,11 @@ Common issues:
   - Adjust quantity/price to match step size and tick size
   - Try small quantities like `0.001`
 
-<<<<<<< HEAD
 - Import warnings in your editor for `binance.*` or `rich.*`
   - Install the packages in the active interpreter: `pip install python-binance rich`
 
 ## Project Structure
 - `bot.py`: Main CLI, `BasicBot` class, logging, validations, order methods, health check, account summary UI
-=======
-- Import warnings in your editor for `binance.*`
-  - Install the package in the active interpreter: `pip install python-binance`
-
-## Project Structure
-- `bot.py`: Main CLI, `BasicBot` class, logging, validations, order methods, health check
->>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 - `bot.log`: Log of requests, responses, and errors (created at runtime)
 
 ## Notes

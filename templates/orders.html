@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}Orders - Binance Trading Bot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-exchange-alt"></i> Order Management
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Order Form -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus"></i> Place New Order
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="order-form" class="order-form">
+                    <div class="mb-3">
+                        <label for="order-type" class="form-label">Order Type</label>
+                        <select class="form-select" id="order-type" required>
+                            <option value="">Select order type</option>
+                            <option value="MARKET">Market Order</option>
+                            <option value="LIMIT">Limit Order</option>
+                            <option value="STOP_LIMIT">Stop-Limit Order</option>
+                            <option value="TAKE_PROFIT_LIMIT">Take-Profit Limit Order</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="symbol" class="form-label">Symbol</label>
+                        <input type="text" class="form-control" id="symbol" placeholder="e.g., BTCUSDT" required>
+                        <div class="form-text">USDT-M Futures symbols only</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="side" class="form-label">Side</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="side" id="buy" value="BUY" required>
+                            <label class="btn btn-outline-success" for="buy">
+                                <i class="fas fa-arrow-up"></i> BUY
+                            </label>
+                            <input type="radio" class="btn-check" name="side" id="sell" value="SELL" required>
+                            <label class="btn btn-outline-danger" for="sell">
+                                <i class="fas fa-arrow-down"></i> SELL
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" step="0.001" min="0.001" required>
+                    </div>
+
+                    <!-- Price fields (shown/hidden based on order type) -->
+                    <div class="mb-3" id="price-field" style="display: none;">
+                        <label for="price" class="form-label">Limit Price</label>
+                        <input type="number" class="form-control" id="price" step="0.01" min="0.01">
+                    </div>
+
+                    <div class="mb-3" id="stop-price-field" style="display: none;">
+                        <label for="stop-price" class="form-label">Stop Price (Trigger)</label>
+                        <input type="number" class="form-control" id="stop-price" step="0.01" min="0.01">
+                    </div>
+
+                    <div class="mb-3" id="limit-price-field" style="display: none;">
+                        <label for="limit-price" class="form-label">Limit Price (After Trigger)</label>
+                        <input type="number" class="form-control" id="limit-price" step="0.01" min="0.01">
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
+                            <span class="btn-text">
+                                <i class="fas fa-paper-plane"></i> Place Order
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order History -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-history"></i> Order History
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshOrders()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Symbol</th>
+                                <th>Side</th>
+                                <th>Type</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">Loading orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Result Modal -->
+<div class="modal fade" id="order-result-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="order-result-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Show/hide price fields based on order type
+    document.getElementById('order-type').addEventListener('change', function() {
+        const orderType = this.value;
+        const priceField = document.getElementById('price-field');
+        const stopPriceField = document.getElementById('stop-price-field');
+        const limitPriceField = document.getElementById('limit-price-field');
+        
+        // Hide all price fields first
+        priceField.style.display = 'none';
+        stopPriceField.style.display = 'none';
+        limitPriceField.style.display = 'none';
+        
+        // Show relevant fields based on order type
+        switch(orderType) {
+            case 'LIMIT':
+                priceField.style.display = 'block';
+                break;
+            case 'STOP_LIMIT':
+            case 'TAKE_PROFIT_LIMIT':
+                stopPriceField.style.display = 'block';
+                limitPriceField.style.display = 'block';
+                break;
+        }
+    });
+
+    // Order form submission
+    document.getElementById('order-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const orderData = {
+            type: document.getElementById('order-type').value,
+            symbol: document.getElementById('symbol').value.toUpperCase(),
+            side: document.querySelector('input[name="side"]:checked').value,
+            quantity: document.getElementById('quantity').value
+        };
+        
+        // Add price fields based on order type
+        const orderType = orderData.type;
+        if (orderType === 'LIMIT') {
+            orderData.price = document.getElementById('price').value;
+        } else if (orderType === 'STOP_LIMIT' || orderType === 'TAKE_PROFIT_LIMIT') {
+            orderData.stop_price = document.getElementById('stop-price').value;
+            orderData.limit_price = document.getElementById('limit-price').value;
+        }
+        
+        // Validate required fields
+        if (!orderData.symbol || !orderData.side || !orderData.quantity) {
+            showAlert('Please fill in all required fields', 'danger');
+            return;
+        }
+        
+        if (orderType === 'LIMIT' && !orderData.price) {
+            showAlert('Price is required for limit orders', 'danger');
+            return;
+        }
+        
+        if ((orderType === 'STOP_LIMIT' || orderType === 'TAKE_PROFIT_LIMIT') && 
+            (!orderData.stop_price || !orderData.limit_price)) {
+            showAlert('Stop price and limit price are required for this order type', 'danger');
+            return;
+        }
+        
+        // Submit order
+        const submitBtn = this.querySelector('button[type="submit"]');
+        showLoading(submitBtn);
+        
+        fetch('/api/place_order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                showOrderResult(data.order);
+                this.reset();
+                refreshOrders();
+            } else {
+                showAlert('Order failed: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Order error:', error);
+            showAlert('Error placing order', 'danger');
+        })
+        .finally(() => {
+            hideLoading(submitBtn);
+        });
+    });
+
+    // Show order result in modal
+    function showOrderResult(order) {
+        const content = document.getElementById('order-result-content');
+        content.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Order Details</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Symbol:</strong></td><td>${order.symbol}</td></tr>
+                        <tr><td><strong>Side:</strong></td><td><span class="badge bg-${order.side === 'BUY' ? 'success' : 'danger'}">${order.side}</span></td></tr>
+                        <tr><td><strong>Type:</strong></td><td>${order.type}</td></tr>
+                        <tr><td><strong>Quantity:</strong></td><td>${order.origQty}</td></tr>
+                        <tr><td><strong>Price:</strong></td><td>${order.price || '-'}</td></tr>
+                        <tr><td><strong>Status:</strong></td><td><span class="badge bg-${order.status === 'FILLED' ? 'success' : 'warning'}">${order.status}</span></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6>Order ID</h6>
+                    <p><strong>Order ID:</strong> ${order.orderId}</p>
+                    <p><strong>Client Order ID:</strong> ${order.clientOrderId || '-'}</p>
+                    <p><strong>Executed Qty:</strong> ${order.executedQty}</p>
+                    <p><strong>Avg Price:</strong> ${order.avgPrice || '-'}</p>
+                    <p><strong>Update Time:</strong> ${formatTimestamp(order.updateTime)}</p>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('order-result-modal'));
+        modal.show();
+    }
+
+    // Refresh orders table
+    function refreshOrders() {
+        const refreshBtn = event.target;
+        showLoading(refreshBtn);
+        
+        fetch('/api/orders')
+            .then(response => response.json())
+            .then(orders => {
+                const tbody = document.getElementById('orders-table');
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No orders found</td></tr>';
+                } else {
+                    tbody.innerHTML = orders.map(order => `
+                        <tr>
+                            <td>${order.timestamp ? order.timestamp.substring(0, 19) : '-'}</td>
+                            <td>${order.symbol}</td>
+                            <td><span class="badge bg-${order.side === 'BUY' ? 'success' : 'danger'}">${order.side}</span></td>
+                            <td>${order.type}</td>
+                            <td>${order.origQty}</td>
+                            <td>${order.price || order.avgPrice || '-'}</td>
+                            <td><span class="badge bg-${order.status === 'FILLED' ? 'success' : 'warning'}">${order.status}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                console.error('Orders refresh error:', error);
+                showAlert('Error loading orders', 'danger');
+            })
+            .finally(() => {
+                hideLoading(refreshBtn);
+            });
+    }
+
+    // Load orders on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        refreshOrders();
+    });
+</script>
+{% endblock %}
+

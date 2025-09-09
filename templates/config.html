@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration - Binance Trading Bot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-cog"></i> Configuration
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-key"></i> API Configuration
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="config-form">
+                    <div class="mb-3">
+                        <label for="api-key" class="form-label">API Key</label>
+                        <input type="password" class="form-control" id="api-key" placeholder="Enter your Binance Futures Testnet API Key">
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> 
+                            Get your API key from <a href="https://testnet.binancefuture.com" target="_blank">Binance Futures Testnet</a>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="api-secret" class="form-label">API Secret</label>
+                        <input type="password" class="form-control" id="api-secret" placeholder="Enter your Binance Futures Testnet API Secret">
+                        <div class="form-text">
+                            <i class="fas fa-shield-alt"></i> 
+                            Your API secret is encrypted and stored securely
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="testnet-mode" checked disabled>
+                            <label class="form-check-label" for="testnet-mode">
+                                Testnet Mode (Always Enabled)
+                            </label>
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-vial"></i> 
+                            This bot only works with Binance Futures Testnet for safety
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
+                            <span class="btn-text">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle"></i> Current Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="config-status">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>API Key:</span>
+                        <span id="api-key-status" class="badge bg-secondary">Checking...</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>API Secret:</span>
+                        <span id="api-secret-status" class="badge bg-secondary">Checking...</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Connection:</span>
+                        <span id="connection-status" class="badge bg-secondary">Checking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-question-circle"></i> Help
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6>Getting Started:</h6>
+                <ol class="small">
+                    <li>Visit <a href="https://testnet.binancefuture.com" target="_blank">Binance Futures Testnet</a></li>
+                    <li>Create an account and generate API keys</li>
+                    <li>Enable Futures permissions for your API key</li>
+                    <li>Enter your credentials above</li>
+                    <li>Click "Save Configuration"</li>
+                </ol>
+                
+                <h6 class="mt-3">Security Notes:</h6>
+                <ul class="small">
+                    <li>Never share your API keys</li>
+                    <li>Use only testnet keys with this bot</li>
+                    <li>Enable IP restrictions on your API keys</li>
+                    <li>Regularly rotate your API keys</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Load current configuration status
+    function loadConfigStatus() {
+        fetch('/api/config')
+            .then(response => response.json())
+            .then(data => {
+                // Update status badges
+                document.getElementById('api-key-status').textContent = data.api_key_set ? 'Set' : 'Not Set';
+                document.getElementById('api-key-status').className = `badge bg-${data.api_key_set ? 'success' : 'warning'}`;
+                
+                document.getElementById('api-secret-status').textContent = data.api_secret_set ? 'Set' : 'Not Set';
+                document.getElementById('api-secret-status').className = `badge bg-${data.api_secret_set ? 'success' : 'warning'}`;
+                
+                // Test connection if both are set
+                if (data.api_key_set && data.api_secret_set) {
+                    testConnection();
+                } else {
+                    document.getElementById('connection-status').textContent = 'Not Configured';
+                    document.getElementById('connection-status').className = 'badge bg-secondary';
+                }
+            })
+            .catch(error => {
+                console.error('Config status error:', error);
+                showAlert('Error loading configuration status', 'danger');
+            });
+    }
+
+    // Test connection
+    function testConnection() {
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('connection-status');
+                if (data.status === 'healthy') {
+                    statusElement.textContent = 'Connected';
+                    statusElement.className = 'badge bg-success';
+                } else {
+                    statusElement.textContent = 'Failed';
+                    statusElement.className = 'badge bg-danger';
+                }
+            })
+            .catch(error => {
+                console.error('Connection test error:', error);
+                const statusElement = document.getElementById('connection-status');
+                statusElement.textContent = 'Error';
+                statusElement.className = 'badge bg-danger';
+            });
+    }
+
+    // Configuration form submission
+    document.getElementById('config-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const apiKey = document.getElementById('api-key').value.trim();
+        const apiSecret = document.getElementById('api-secret').value.trim();
+        
+        if (!apiKey || !apiSecret) {
+            showAlert('Please enter both API key and secret', 'danger');
+            return;
+        }
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        showLoading(submitBtn);
+        
+        fetch('/api/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                api_key: apiKey,
+                api_secret: apiSecret
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                // Clear form
+                document.getElementById('api-key').value = '';
+                document.getElementById('api-secret').value = '';
+                // Reload status
+                loadConfigStatus();
+            } else {
+                showAlert('Configuration failed: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Config error:', error);
+            showAlert('Error saving configuration', 'danger');
+        })
+        .finally(() => {
+            hideLoading(submitBtn);
+        });
+    });
+
+    // Load status on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadConfigStatus();
+    });
+</script>
+{% endblock %}
+

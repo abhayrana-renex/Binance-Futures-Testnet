@@ -67,7 +67,9 @@
 2025-09-09 00:43:22 | INFO | BasicBot | RESPONSE | futures_create_order_limit | {"orderId": 5642884358, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJ9228ad4225e547da83a22b", "price": "110000.00", "avgPrice": "0.00", "origQty": "0.010", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "LIMIT", "reduceOnly": false, "closePosition": false, "side": "BUY", "positionSide": "BOTH", "stopPrice": "0.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "LIMIT", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757358802340}
 2025-09-09 00:44:20 | INFO | BasicBot | REQUEST | futures_create_order_stop_limit | {"symbol": "BTCUSDT", "side": "SELL", "type": "STOP", "timeInForce": "GTC", "quantity": "0.01", "price": "90000", "stopPrice": "95000"}
 2025-09-09 00:44:21 | INFO | BasicBot | RESPONSE | futures_create_order_stop_limit | {"orderId": 5642885482, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJb84ae1268bf555972d2e27", "price": "90000.00", "avgPrice": "0.00", "origQty": "0.010", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "STOP", "reduceOnly": false, "closePosition": false, "side": "SELL", "positionSide": "BOTH", "stopPrice": "95000.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "STOP", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757358861063}
-<<<<<<< HEAD
+HEAD
+HEAD
+1b8d603 (Update: sync code, requirements, and UI; ready for push)
 2025-09-09 01:21:49 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
 2025-09-09 01:21:50 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
 2025-09-09 01:21:50 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
@@ -83,5 +85,39 @@
 2025-09-09 01:25:24 | INFO | BasicBot | REQUEST | futures_create_order_tp_limit | {"symbol": "BTCUSDT", "side": "SELL", "type": "TAKE_PROFIT", "timeInForce": "GTC", "quantity": "2", "price": "50000", "stopPrice": "90000"}
 2025-09-09 01:25:25 | ERROR | BasicBot | ERROR | futures_create_order_tp_limit | BinanceAPIException: APIError(code=-2019): Margin is insufficient.
 2025-09-09 01:25:25 | ERROR | BasicBot | Binance error: APIError(code=-2019): Margin is insufficient.
-=======
->>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
+HEAD
+89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
+2025-09-09 09:36:46 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-09 09:36:46 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-09 09:36:46 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-09 09:36:46 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757390806947}
+2025-09-09 09:36:46 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-09 09:36:47 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-09 09:36:48 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-09 09:36:48 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-09 09:36:48 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-09 09:36:48 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757390808941}
+2025-09-09 09:36:48 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-09 09:36:49 | ERROR | BasicBot | ERROR | health_check | BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action
+2025-09-09 11:25:07 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-09 11:25:08 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-09 11:25:08 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-09 11:25:08 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757397308706}
+2025-09-09 11:25:08 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-09 11:25:09 | INFO | BasicBot | RESPONSE | health_check | {"canTrade": true}
+2025-09-09 17:41:52 | INFO | BasicBot | REQUEST | health_check | {"action": "ping"}
+2025-09-09 17:41:53 | INFO | BasicBot | RESPONSE | health_check | {"ping": "ok"}
+2025-09-09 17:41:53 | INFO | BasicBot | REQUEST | health_check | {"action": "time"}
+2025-09-09 17:41:54 | INFO | BasicBot | RESPONSE | health_check | {"serverTime": 1757419914474}
+2025-09-09 17:41:54 | INFO | BasicBot | REQUEST | health_check | {"action": "account"}
+2025-09-09 17:41:54 | INFO | BasicBot | RESPONSE | health_check | {"canTrade": true}
+2025-09-09 17:41:54 | INFO | BasicBot | Bot initialized successfully
+2025-09-09 17:41:54 | INFO | BasicBot | REQUEST | account_summary | {"action": "balances"}
+2025-09-09 17:41:55 | INFO | BasicBot | RESPONSE | account_summary | {"balances_count": 7}
+2025-09-09 17:41:55 | INFO | BasicBot | REQUEST | account_summary | {"action": "positions"}
+2025-09-09 17:41:55 | INFO | BasicBot | RESPONSE | account_summary | {"positions_count": 1}
+2025-09-09 17:42:42 | INFO | BasicBot | REQUEST | futures_create_order_market | {"symbol": "BTCUSDT", "side": "BUY", "type": "MARKET", "quantity": "0.01"}
+2025-09-09 17:42:43 | INFO | BasicBot | RESPONSE | futures_create_order_market | {"orderId": 5643742901, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJc6aaaae0c16426abfe7b2b", "price": "0.00", "avgPrice": "0.00", "origQty": "0.010", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "MARKET", "reduceOnly": false, "closePosition": false, "side": "BUY", "positionSide": "BOTH", "stopPrice": "0.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "MARKET", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757419963244}
+2025-09-09 17:43:11 | INFO | BasicBot | REQUEST | futures_create_order_limit | {"symbol": "BTCUSDT", "side": "BUY", "type": "LIMIT", "timeInForce": "GTC", "quantity": "2", "price": "90000"}
+2025-09-09 17:43:11 | INFO | BasicBot | RESPONSE | futures_create_order_limit | {"orderId": 5643743442, "symbol": "BTCUSDT", "status": "NEW", "clientOrderId": "x-Cb7ytekJbe4a0917d9a700280bf476", "price": "90000.00", "avgPrice": "0.00", "origQty": "2.000", "executedQty": "0.000", "cumQty": "0.000", "cumQuote": "0.00000", "timeInForce": "GTC", "type": "LIMIT", "reduceOnly": false, "closePosition": false, "side": "BUY", "positionSide": "BOTH", "stopPrice": "0.00", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "LIMIT", "priceMatch": "NONE", "selfTradePreventionMode": "EXPIRE_MAKER", "goodTillDate": 0, "updateTime": 1757419991628}
+1b8d603 (Update: sync code, requirements, and UI; ready for push)
