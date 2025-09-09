@@ -1,5 +1,6 @@
 # Binance USDT-M Futures Testnet Trading Bot
 
+<<<<<<< HEAD
 A simple, production-ready Python CLI bot for Binance USDT-M Futures Testnet. Supports Market, Limit, Stop-Limit, and Take-Profit Limit orders with robust input validation, logging, startup health checks, and a basic account summary UI.
 
 ## Features
@@ -9,17 +10,35 @@ A simple, production-ready Python CLI bot for Binance USDT-M Futures Testnet. Su
 - Startup health check: connectivity, server time drift, and credential permissions
 - Menu-driven CLI with clear status output and Account Summary
 - Optional colorful TUI powered by `rich` (falls back to plain CLI)
+=======
+A simple, production-ready Python CLI bot for Binance USDT-M Futures Testnet. Supports Market, Limit, and Stop-Limit orders with robust input validation, logging, and startup health checks.
+
+## Features
+- Market, Limit, and Stop-Limit orders (USDT-M Futures)
+- Validates symbol filters (step size, tick size, min qty)
+- Logs requests, responses, and errors to `bot.log`
+- Startup health check: connectivity, server time drift, and credential permissions
+- Menu-driven CLI with clear status output
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 
 ## Requirements
 - Python 3.9+
 - Binance Futures Testnet API Key/Secret
 - Package: `python-binance`
+<<<<<<< HEAD
 - Optional UI: `rich`
 
 ## Quick Start
 1) Install dependencies (plus optional UI):
 ```bash
 pip install python-binance rich
+=======
+
+## Quick Start
+1) Install dependencies:
+```bash
+pip install python-binance
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 ```
 
 2) Export your Testnet credentials (recommended):
@@ -37,6 +56,7 @@ python /Users/abhayrana/prime/bot.py
 - At startup, a health check runs. If something’s wrong, the bot prints a clear diagnostic and exits.
 
 ## Usage
+<<<<<<< HEAD
 - Choose an action from the menu:
   - 1 Market Order
   - 2 Limit Order
@@ -49,16 +69,30 @@ python /Users/abhayrana/prime/bot.py
 
 If `rich` is installed, you’ll see colored panels and tables for menus, orders, and account summaries. Without `rich`, it falls back to a plain text interface.
 
+=======
+- Choose an order type from the menu.
+- Provide a valid USDT-M symbol (e.g., `BTCUSDT`).
+- Enter quantity and (if applicable) price values. The bot auto-adjusts to step/tick sizes but will reject values below `minQty`.
+
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 Example flow:
 ```
 Select an action:
   1) Place MARKET Order
   2) Place LIMIT Order
   3) Place STOP-LIMIT Order
+<<<<<<< HEAD
   4) Place TAKE-PROFIT LIMIT Order
   5) View Account Summary
   6) Exit
 Choice (1-6): 5
+=======
+  4) Exit
+Choice (1-4): 1
+Symbol (e.g., BTCUSDT): BTCUSDT
+Side (BUY/SELL): BUY
+Quantity: 0.001
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 ```
 
 The result shows order details (status, orderId, executedQty, etc.). All request/response payloads are saved in `bot.log`.
@@ -90,11 +124,19 @@ Common issues:
   - Adjust quantity/price to match step size and tick size
   - Try small quantities like `0.001`
 
+<<<<<<< HEAD
 - Import warnings in your editor for `binance.*` or `rich.*`
   - Install the packages in the active interpreter: `pip install python-binance rich`
 
 ## Project Structure
 - `bot.py`: Main CLI, `BasicBot` class, logging, validations, order methods, health check, account summary UI
+=======
+- Import warnings in your editor for `binance.*`
+  - Install the package in the active interpreter: `pip install python-binance`
+
+## Project Structure
+- `bot.py`: Main CLI, `BasicBot` class, logging, validations, order methods, health check
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 - `bot.log`: Log of requests, responses, and errors (created at runtime)
 
 ## Notes

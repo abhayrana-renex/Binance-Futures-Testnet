@@ -19,6 +19,7 @@ from binance.enums import (
 
 LOG_FILE = "bot.log"
 
+<<<<<<< HEAD
 # Optional Rich TUI
 try:
     from rich.console import Console
@@ -31,6 +32,8 @@ except Exception:
     RICH_AVAILABLE = False
     _RICH_CONSOLE = None
 
+=======
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 
 def setup_logger(level: int = logging.INFO) -> logging.Logger:
     """Configure module-level logger writing to bot.log and stdout."""
@@ -343,6 +346,7 @@ class BasicBot:
             self._log_error(operation, exc)
             raise
 
+<<<<<<< HEAD
     def place_take_profit_limit_order(
         self,
         symbol: str,
@@ -423,6 +427,8 @@ class BasicBot:
             raise
         return summary
 
+=======
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 
 def _prompt_non_empty(prompt: str) -> str:
     while True:
@@ -455,6 +461,11 @@ def _prompt_decimal(prompt: str) -> Decimal:
 
 def print_order_result(title: str, data: Dict[str, Any]) -> None:
     """Render a concise order result to the CLI."""
+<<<<<<< HEAD
+=======
+    print("\n" + title)
+    print("-" * len(title))
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
     fields = [
         ("symbol", data.get("symbol")),
         ("side", data.get("side")),
@@ -469,6 +480,7 @@ def print_order_result(title: str, data: Dict[str, Any]) -> None:
         ("stopPrice", data.get("stopPrice")),
         ("updateTime", data.get("updateTime")),
     ]
+<<<<<<< HEAD
     if RICH_AVAILABLE and _RICH_CONSOLE:
         table = Table(title=title, box=box.SIMPLE_HEAVY)
         table.add_column("Field", style="cyan", no_wrap=True)
@@ -546,6 +558,14 @@ def print_account_summary(summary: Dict[str, Any]) -> None:
             print("\nNo open positions.")
         print()
 
+=======
+    for key, value in fields:
+        if value is not None:
+            print(f"{key}: {value}")
+    print()
+
+
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 def main() -> None:
     logger = setup_logger()
 
@@ -556,12 +576,18 @@ def main() -> None:
     # Initialize bot (defaults to testnet)
     bot = BasicBot(api_key=api_key, api_secret=api_secret, testnet=True, log_level=logging.INFO)
 
+<<<<<<< HEAD
     if RICH_AVAILABLE and _RICH_CONSOLE:
         _RICH_CONSOLE.print(Panel.fit("[bold]Binance Futures Testnet Trading Bot[/bold]\nhttps://testnet.binancefuture.com", border_style="blue"))
     else:
         print("\nBinance Futures Testnet Trading Bot")
         print("===================================")
         print("Connected to: https://testnet.binancefuture.com")
+=======
+    print("\nBinance Futures Testnet Trading Bot")
+    print("===================================")
+    print("Connected to: https://testnet.binancefuture.com")
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
 
     # Startup health check: connectivity, time sync, and credentials
     try:
@@ -582,6 +608,7 @@ def main() -> None:
 
     # Simple interactive menu
     while True:
+<<<<<<< HEAD
         if RICH_AVAILABLE and _RICH_CONSOLE:
             menu = (
                 "[bold]Select an action:[/bold]\n"
@@ -604,6 +631,16 @@ def main() -> None:
 
         choice = _prompt_choice("Choice (1-6): ", ("1", "2", "3", "4", "5", "6"))
         if choice == "6":
+=======
+        print("\nSelect an action:")
+        print("  1) Place MARKET Order")
+        print("  2) Place LIMIT Order")
+        print("  3) Place STOP-LIMIT Order")
+        print("  4) Exit")
+
+        choice = _prompt_choice("Choice (1-4): ", ("1", "2", "3", "4"))
+        if choice == "4":
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
             print("Goodbye!")
             break
 
@@ -639,6 +676,7 @@ def main() -> None:
                 )
                 print_order_result("Stop-Limit Order Result", result)
 
+<<<<<<< HEAD
             elif choice == "4":
                 qty = _prompt_decimal("Quantity: ")
                 stop_price = _prompt_decimal("Stop Price (trigger): ")
@@ -656,6 +694,8 @@ def main() -> None:
                 summary = bot.get_account_summary()
                 print_account_summary(summary)
 
+=======
+>>>>>>> 89aef2d (Initial commit: Binance Futures Testnet Trading Bot)
         except ValueError as ve:
             logger.error("Validation error: %s", str(ve))
             print(f"Validation error: {ve}")
